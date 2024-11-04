@@ -14,68 +14,84 @@ typedef struct _person {
 position create_person(position head, char* fname, char* lname, int birth_year);
 int prepend_list(position head, char* fname, char* lname, int birth_year);
 int append_list(position head, char* fname, char* lname, int birth_year);
-int insert_after(position previous,char *fname, char *lname,int birth_year);
+int insert_after(position previous, char* fname, char* lname, int birth_year);
 int print_list(position first);
 position find_by_lname(position first, char* lname);
 position find_last(position head);
 position findPrevious(position first, position target);
 void delete_person(position head, position target);
-//sortiranje se ne trazi
-+
-
-
+int write_to_file(position head, const char* filename);
+int read_from_file(position head, const char* filename);
 
 int main() {
-    char fname1[32], fname2[32];
-    char lname1[32], lname2[32], lname3[32];
-    int bday1, bday2;
-	char osoba[32];
+    char fname1[32], fname2[32], fname3[32];
+    char lname1[32], lname2[32], lname3[32], lname4[32];
+    int bday1, bday2, bday3;
 
     person head = { .fname = "", .lname = "", .next = NULL };
 
+    
     printf("Dodajte element na pocetak liste: \n");
     scanf("%s %s %d", fname1, lname1, &bday1);
     prepend_list(&head, fname1, lname1, bday1);
-
-    printf("Lista sad izgleda ovako: \n");
+    printf("Lista nakon dodavanja elementa na pocetak:\n");
     print_list(head.next);
 
+    
     printf("Dodajte element na kraj liste: \n");
     scanf("%s %s %d", fname2, lname2, &bday2);
     append_list(&head, fname2, lname2, bday2);
-
-    printf("Lista nakon dodavanja na kraj izgleda ovako: \n");
+    printf("Lista nakon dodavanja elementa na kraj:\n");
     print_list(head.next);
 
-    printf("Potrazite neko prezime iz liste: \n");
+    
+    printf("Potrazite neko prezime u listi: \n");
     scanf("%s", lname3);
     position target = find_by_lname(head.next, lname3);
     if (target != NULL) {
-        printf("Pronađen je element u listi: %s %s %d\n", target->fname, target->lname, target->birth_year);
+        printf("Pronađen je element: %s %s %d\n", target->fname, target->lname, target->birth_year);
     }
     else {
         printf("Osoba s prezimenom %s nije pronađena.\n", lname3);
     }
 
-    printf("Unesite prezime osobe za brisanje: \n");
+    
+    printf("Unesite prezime osobe iza koje želite uneti novu osobu:\n");
+    scanf("%s", lname4);
+    target = find_by_lname(head.next, lname4);
+    if (target != NULL) {
+        printf("Unesite ime, prezime i godinu rođenja nove osobe:\n");
+        scanf("%s %s %d", fname3, lname3, &bday3);
+        insert_after(target, fname3, lname3, bday3);
+        printf("Lista nakon umetanja novog elementa iza %s:\n", lname4);
+        print_list(head.next);
+    }
+    else {
+        printf("Osoba s prezimenom %s nije pronađena za umetanje.\n", lname4);
+    }
+
+    
+    printf("Unesite prezime osobe koju želite obrisati iz liste: \n");
     scanf("%s", lname3);
     target = find_by_lname(head.next, lname3);
     if (target != NULL) {
         delete_person(&head, target);
-        printf("Osoba je obrisana. Lista sada izgleda ovako: \n");
+        printf("Lista nakon brisanja osobe %s:\n", lname3);
         print_list(head.next);
     }
     else {
-        printf("Osoba s prezimenom %s nije pronađena.\n", lname3);
+        printf("Osoba s prezimenom %s nije pronađena za brisanje.\n", lname3);
     }
 
-	printf("Unesite prezime osobe iza koje zelite unijeti novu:\n");
-	scanf("%s", osoba);
-	
-	position target = find_by_lname(head.next, osoba);
-	if (target != NULL) {
-		insert_after(target);
-	}
+    
+    write_to_file(head.next, "lista.txt");
+    printf("Lista je upisana u datoteku 'lista.txt'.\n");
+
+    
+    person new_head = { .fname = "", .lname = "", .next = NULL };
+    read_from_file(&new_head, "lista.txt");
+    printf("Lista pročitana iz datoteke:\n");
+    print_list(new_head.next);
 
     return 0;
 }
@@ -164,28 +180,53 @@ void delete_person(position head, position toDelete) {
     }
 }
 
-int insert_after(position previous) {
-	if (previous = NULL) {
-		printf("Greska");
-		return -1;
-	}
-	char fname[32];
-	char lname[32];
-	int birth_year;
+int insert_after(position previous, char* fname, char* lname, int birth_year) {
+    if (previous == NULL) {
+        printf("Error: previous position is NULL.\n");
+        return -1;
+    }
+    position new_person = create_person(previous, fname, lname, birth_year);
+    if (new_person == NULL) return -1;
+    new_person->next = previous->next;
+    previous->next = new_person;
+    return 0;
+}
 
-	printf("Unesite ime nove osobe:\n");
-	scanf("%s", fname);
-	printf("Unesite preziem\n");
-	scanf("%s", lname);
-	printf("Unesite datum rodjenja:\n");
-	scanf("%d", &birth_year);
-	position new_person = create_person(previous, fname, lname, birth_year);
-	if (new_person == NULL)return -1;
-	new_person->next = previous->next;
-	previous->next = new_person;
+int write_to_file(position head, const char* filename) {
+    FILE* file = fopen(filename, "w");
+    if (file == NULL) {
+        printf("Error opening file.\n");
+        return -1;
+    }
+    position temp = head;
+    while (temp != NULL) {
+        fprintf(file, "%s %s %d\n", temp->fname, temp->lname, temp->birth_year);
+        temp = temp->next;
+    }
+    fclose(file);
+    return 0;
+}
 
+int read_from_file(position head, const char* filename) {
+    FILE* file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("Error opening file.\n");
+        return -1;
+    }
 
+    char line[128];
+    char fname[32], lname[32];
+    int birth_year;
 
-	return 0;
+    while (fgets(line, sizeof(line), file) != NULL) {
+        if (sscanf(line, "%s %s %d", fname, lname, &birth_year) == 3) {
+            append_list(head, fname, lname, birth_year);
+        }
+        else {
+            printf("Invalid line format: %s", line);
+        }
+    }
 
+    fclose(file);
+    return 0;
 }
