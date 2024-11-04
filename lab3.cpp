@@ -22,11 +22,12 @@ position findPrevious(position first, position target);
 void delete_person(position head, position target);
 int write_to_file(position head, const char* filename);
 int read_from_file(position head, const char* filename);
+int insert_before(position head, position target, char* fname, char* lname, int birth_year);
 
 int main() {
-    char fname1[32], fname2[32], fname3[32];
-    char lname1[32], lname2[32], lname3[32], lname4[32];
-    int bday1, bday2, bday3;
+    char fname1[32], fname2[32], fname3[32], fname4[32];
+    char lname1[32], lname2[32], lname3[32], lname4[32],lname5[32];
+    int bday1, bday2, bday3, bday4;
 
     person head = { .fname = "", .lname = "", .next = NULL };
 
@@ -68,6 +69,20 @@ int main() {
     }
     else {
         printf("Osoba s prezimenom %s nije pronađena za umetanje.\n", lname4);
+    }
+
+    printf("Unesite prezime osobe prije koje želite uneti novu osobu:\n");
+    scanf("%s", lname5);
+    target = find_by_lname(head.next, lname5);
+    if (target != NULL) {
+        printf("Unesite ime, prezime i godinu rođenja nove osobe:\n");
+        scanf("%s %s %d", fname4, lname4, &bday4);
+        insert_before(&head, target, fname4, lname4, bday4);
+        printf("Lista nakon umetanja novog elementa prije %s:\n", lname5);
+        print_list(head.next);
+    }
+    else {
+        printf("Osoba s prezimenom %s nije pronađena za umetanje.\n", lname5);
     }
 
     
@@ -230,3 +245,31 @@ int read_from_file(position head, const char* filename) {
     fclose(file);
     return 0;
 }
+
+int insert_before(position head, position target, char* fname, char* lname, int birth_year) {
+    if (target == NULL) {
+        printf("Error: target position is NULL.\n");
+        return -1;
+    }
+
+    position new_person = create_person(head, fname, lname, birth_year);
+    if (new_person == NULL) {
+        return -1;
+    }
+
+    
+    position previous = findPrevious(head, target);
+
+    if (previous == NULL) {
+        printf("Error: Target is the head of the list, cannot insert before it directly.\n");
+        free(new_person);
+        return -1;
+    }
+
+    
+    new_person->next = target;
+    previous->next = new_person;
+
+    return 0;
+}
+
