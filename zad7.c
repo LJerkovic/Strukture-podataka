@@ -8,11 +8,11 @@
 typedef struct direktorij* pozicija;
 typedef struct stog* pozicija_stoga;
 
-struct direktorij {
+typedef struct direktorij {
 	char ime[max_ime];
 	pozicija brat;
 	pozicija dijete;
-};
+}direktorij;
 
 typedef struct stog {
 	pozicija podaci;
@@ -32,7 +32,7 @@ int korisnicki_unos(pozicija trenutni, pozicija_stoga glava_stoga);
 void obrisi(pozicija);
 
 int main() {
-	struct direktorij c;
+	direktorij c;
 	c.brat = NULL;
 	c.dijete = NULL;
 	strcpy(c.ime, "C:");
@@ -48,7 +48,7 @@ int main() {
 }
 
 pozicija alociraj_memoriju_direktorij() {
-	pozicija novi = (pozicija)malloc(sizeof(struct direktorij));
+	pozicija novi = (pozicija)malloc(sizeof(direktorij));
 	if (!novi) {
 		printf("Ne mogu alocirati memoriju!\n");
 		return NULL;
@@ -157,7 +157,7 @@ int putanja(pozicija trenutni, pozicija_stoga glava_stoga) {
 	while (temp) {
 		strcat(ispis, temp->podaci->ime);
 		strcat(ispis, "\\");
-			temp = temp->sljedeci;
+		temp = temp->sljedeci;
 	}
 	strcat(ispis, trenutni->ime);
 	strcat(ispis, "> ");
