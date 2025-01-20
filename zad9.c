@@ -4,16 +4,16 @@
 #include <time.h>
 
 
-
-typedef struct Node {
+typedef struct Node* position;
+ struct Node {
     int data;
     struct Node* left;
     struct Node* right;
-} Node;
+} ;
 
 
-Node* createNode(int data) {
-    Node* newNode = (Node*)malloc(sizeof(Node));
+position createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(struct Node));
     newNode->data = data;
     newNode->left = NULL;
     newNode->right = NULL;
@@ -21,7 +21,7 @@ Node* createNode(int data) {
 }
 
 
-Node* insert(Node* root, int data) {
+position insert(position root, int data) {
     if (root == NULL) {
         return createNode(data);
     }
@@ -35,7 +35,7 @@ Node* insert(Node* root, int data) {
 }
 
 
-void inorder(Node* root, FILE* file) {
+void inorder(position root, FILE* file) {
     if (root != NULL) {
         inorder(root->left, file);
         fprintf(file, "%d ", root->data);
@@ -44,7 +44,7 @@ void inorder(Node* root, FILE* file) {
 }
 
 
-int sumSubtree(Node* root) {
+int sumSubtree(position root) {
     if (root == NULL) {
         return 0;
     }
@@ -56,7 +56,7 @@ int sumSubtree(Node* root) {
 }
 
 
-void replace(Node* root) {
+void replace(position root) {
     sumSubtree(root);
 }
 
