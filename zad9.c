@@ -3,13 +3,12 @@
 #include <stdlib.h>
 #include <time.h>
 
-
 typedef struct Node* position;
- struct Node {
+struct Node {
     int data;
     struct Node* left;
     struct Node* right;
-} ;
+};
 
 position createNode(int data);
 position insert(position root, int data);
@@ -24,35 +23,35 @@ int main() {
 
     srand(time(NULL));
     for (i = 0; i < n; i++) {
-        randomNumbers[i] = rand() % 81 + 10; 
+        randomNumbers[i] = rand() % 81 + 10;
     }
 
-    
+
     for (i = 0; i < n; i++) {
         root = insert(root, randomNumbers[i]);
     }
 
-   
+
     file = fopen("output.txt", "w");
     if (file == NULL) {
         printf("Greska pri otvaranju datoteke\n");
         return 1;
     }
 
-    
+
     fprintf(file, "Inorder prije : ");
     inorder(root, file);
     fprintf(file, "\n");
 
-    
+
     replace(root);
 
-    
+
     fprintf(file, "Inorder nakon : ");
     inorder(root, file);
     fprintf(file, "\n");
 
-    
+
     fclose(file);
 
     printf("Rezultati su upisani \n");
@@ -64,10 +63,9 @@ position createNode(int data) {
     newNode->data = data;
     newNode->left = NULL;
     newNode->right = NULL;
- 
+
     return newNode;
 }
-
 
 position insert(position root, int data) {
     if (root == NULL) {
@@ -82,7 +80,6 @@ position insert(position root, int data) {
     return root;
 }
 
-
 int inorder(position root, FILE* file) {
     if (root != NULL) {
         inorder(root->left, file);
@@ -90,9 +87,8 @@ int inorder(position root, FILE* file) {
         inorder(root->right, file);
     }
 
- return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }
-
 
 int sumSubtree(position root) {
     if (root == NULL) {
@@ -102,11 +98,10 @@ int sumSubtree(position root) {
     int rightSum = sumSubtree(root->right);
     int currentData = root->data;
     root->data = leftSum + rightSum;
- 
+
     return currentData + root->data;
 }
 
-
 int replace(position root) {
-   return sumSubtree(root);
+    return sumSubtree(root);
 }
