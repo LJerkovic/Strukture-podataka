@@ -104,7 +104,7 @@ void unesi_drzavu(cvor_drzava head, char* ime_drzave, char* grad_datoteke) {
 
 
 
-    while (fscanf(file, "%20[^,],%d", temp, &br) == 2) {
+    while (fscanf(file, "%s %d", temp, &br) == 2) {
 
         novi->head_grad = unesi_grad(novi->head_grad, temp, br);
 
