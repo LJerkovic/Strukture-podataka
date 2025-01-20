@@ -18,7 +18,7 @@ int sumSubtree(position root);
 int replace(position root);
 
 int main() {
-    Node* root = NULL;
+    position root = NULL;
     int i, n = 10, randomNumbers[10];
     FILE* file;
 
@@ -60,7 +60,7 @@ int main() {
 }
 
 position createNode(int data) {
-    Node* newNode = (Node*)malloc(sizeof(struct Node));
+    position newNode = (Node*)malloc(sizeof(struct Node));
     newNode->data = data;
     newNode->left = NULL;
     newNode->right = NULL;
