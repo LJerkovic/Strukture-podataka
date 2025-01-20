@@ -60,7 +60,7 @@ int main() {
 }
 
 position createNode(int data) {
-    position newNode = (Node*)malloc(sizeof(struct Node));
+    position newNode = (position)malloc(sizeof(struct Node));
     newNode->data = data;
     newNode->left = NULL;
     newNode->right = NULL;
