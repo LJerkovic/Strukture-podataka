@@ -11,55 +11,11 @@ typedef struct Node* position;
     struct Node* right;
 } ;
 
-
-position createNode(int data) {
-    Node* newNode = (Node*)malloc(sizeof(struct Node));
-    newNode->data = data;
-    newNode->left = NULL;
-    newNode->right = NULL;
-    return newNode;
-}
-
-
-position insert(position root, int data) {
-    if (root == NULL) {
-        return createNode(data);
-    }
-    if (data < root->data) {
-        root->left = insert(root->left, data);
-    }
-    else {
-        root->right = insert(root->right, data);
-    }
-    return root;
-}
-
-
-void inorder(position root, FILE* file) {
-    if (root != NULL) {
-        inorder(root->left, file);
-        fprintf(file, "%d ", root->data);
-        inorder(root->right, file);
-    }
-}
-
-
-int sumSubtree(position root) {
-    if (root == NULL) {
-        return 0;
-    }
-    int leftSum = sumSubtree(root->left);
-    int rightSum = sumSubtree(root->right);
-    int currentData = root->data;
-    root->data = leftSum + rightSum;
-    return currentData + root->data;
-}
-
-
-void replace(position root) {
-    sumSubtree(root);
-}
-
+position createNode(int data);
+position insert(position root, int data);
+int inorder(position root, FILE* file);
+int sumSubtree(position root);
+int replace(position root);
 
 int main() {
     Node* root = NULL;
@@ -100,5 +56,57 @@ int main() {
     fclose(file);
 
     printf("Rezultati su upisani \n");
-    return 0;
+    return EXIT_SUCCESS;
+}
+
+position createNode(int data) {
+    Node* newNode = (Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->left = NULL;
+    newNode->right = NULL;
+ 
+    return newNode;
+}
+
+
+position insert(position root, int data) {
+    if (root == NULL) {
+        return createNode(data);
+    }
+    if (data < root->data) {
+        root->left = insert(root->left, data);
+    }
+    else {
+        root->right = insert(root->right, data);
+    }
+    return root;
+}
+
+
+int inorder(position root, FILE* file) {
+    if (root != NULL) {
+        inorder(root->left, file);
+        fprintf(file, "%d ", root->data);
+        inorder(root->right, file);
+    }
+
+ return EXIT_SUCCESS;
+}
+
+
+int sumSubtree(position root) {
+    if (root == NULL) {
+        return 0;
+    }
+    int leftSum = sumSubtree(root->left);
+    int rightSum = sumSubtree(root->right);
+    int currentData = root->data;
+    root->data = leftSum + rightSum;
+ 
+    return currentData + root->data;
+}
+
+
+int replace(position root) {
+   return sumSubtree(root);
 }
